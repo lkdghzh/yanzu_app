@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
 import 'screens/profile_screen.dart';
+import 'services/navigation_service.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,10 +13,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: NavigationService.navigatorKey,
       title: '租房APP',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+        useMaterial3: true,
       ),
       home: const MainScreen(),
     );
@@ -60,4 +62,4 @@ class _MainScreenState extends State<MainScreen> {
       ),
     );
   }
-} 
+}

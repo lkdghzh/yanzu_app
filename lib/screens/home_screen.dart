@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper_view/flutter_swiper_view.dart';
 import 'dart:math';
-import 'webview_screen.dart';
+import '../utils/route_handler.dart';
+import '../services/navigation_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -26,25 +27,37 @@ class _HomeScreenState extends State<HomeScreen> {
       'title': '生活缴费',
       'icon': Icons.payment,
       'color': Colors.blue,
-      'urls': ['https://example.com/payment', 'https://pay.example.com'],
+      'urls': [
+        'yanzu://webview?url=https://example.com/payment&title=生活缴费',
+        'yanzu://webview?url=https://pay.example.com&title=生活缴费'
+      ],
     },
     {
       'title': '房屋维修',
       'icon': Icons.build,
       'color': Colors.orange,
-      'urls': ['https://example.com/repair', 'https://fix.example.com'],
+      'urls': [
+        'yanzu://webview?url=https://example.com/repair&title=房屋维修',
+        'yanzu://webview?url=https://fix.example.com&title=房屋维修'
+      ],
     },
     {
       'title': '周边配套',
       'icon': Icons.location_on,
       'color': Colors.green,
-      'urls': ['https://example.com/nearby', 'https://map.example.com'],
+      'urls': [
+        'yanzu://webview?url=https://example.com/nearby&title=周边配套',
+        'yanzu://webview?url=https://map.example.com&title=周边配套'
+      ],
     },
     {
       'title': '租房攻略',
       'icon': Icons.article,
       'color': Colors.purple,
-      'urls': ['https://example.com/guide', 'https://blog.example.com'],
+      'urls': [
+        'yanzu://webview?url=https://example.com/guide&title=租房攻略',
+        'yanzu://webview?url=https://blog.example.com&title=租房攻略'
+      ],
     },
   ];
 
@@ -182,15 +195,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     final feature = features[index];
                     return InkWell(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => WebViewScreen(
-                              url: _getRandomUrl(feature['urls']),
-                              title: feature['title'],
-                            ),
-                          ),
-                        );
+                        NavigationService.navigateTo(
+                            _getRandomUrl(feature['urls']));
                       },
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
