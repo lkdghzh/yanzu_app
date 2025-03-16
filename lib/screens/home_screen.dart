@@ -69,183 +69,192 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('租房'),
-        elevation: 0,
-      ),
-      body: Column(
-        children: [
-          // 搜索栏
-          Container(
-            padding: const EdgeInsets.all(16.0),
-            color: Colors.blue,
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: '搜索房源',
-                prefixIcon: const Icon(Icons.search),
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide.none,
+      body: CustomScrollView(
+        slivers: [
+          // AppBar
+          SliverAppBar(
+            title: const Text('租房'),
+            floating: true,
+            // pinned: true,
+            elevation: 0,
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(80),
+              child: Container(
+                padding: const EdgeInsets.all(16.0),
+                color: Colors.blue,
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: '搜索房源',
+                    prefixIcon: const Icon(Icons.search),
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
                 ),
               ),
             ),
           ),
-          // 轮播图
-          Container(
-            height: 180,
-            margin: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  spreadRadius: 0,
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
+          // 主要内容
+          SliverToBoxAdapter(
+            child: Column(
+              children: [
+                // 轮播图
+                Container(
+                  height: 180,
+                  margin: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        spreadRadius: 0,
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Swiper(
+                    itemBuilder: (BuildContext context, int index) {
+                      return Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.network(
+                              bannerImages[index],
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  Colors.transparent,
+                                  Colors.black.withOpacity(0.7),
+                                ],
+                                stops: const [0.6, 1.0],
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            left: 16,
+                            right: 16,
+                            bottom: 16,
+                            child: Text(
+                              '精选房源 ${index + 1}',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                    itemCount: bannerImages.length,
+                    pagination: SwiperPagination(
+                      margin: const EdgeInsets.only(bottom: 45),
+                      builder: DotSwiperPaginationBuilder(
+                        activeColor: Colors.white,
+                        color: Colors.white.withOpacity(0.5),
+                        size: 6.0,
+                        activeSize: 7.0,
+                        space: 4.0,
+                      ),
+                    ),
+                    autoplay: true,
+                    autoplayDelay: 4000,
+                    duration: 500,
+                  ),
                 ),
-              ],
-            ),
-            child: Swiper(
-              itemBuilder: (BuildContext context, int index) {
-                return Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image.network(
-                        bannerImages[index],
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    // 渐变遮罩
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.transparent,
-                            Colors.black.withOpacity(0.7),
-                          ],
-                          stops: const [0.6, 1.0],
-                        ),
-                      ),
-                    ),
-                    // 标题
-                    Positioned(
-                      left: 16,
-                      right: 16,
-                      bottom: 16,
-                      child: Text(
-                        '精选房源 ${index + 1}',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
+                // 功能入口
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        '常用功能',
+                        style: TextStyle(
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                  ],
-                );
-              },
-              itemCount: bannerImages.length,
-              pagination: SwiperPagination(
-                margin: const EdgeInsets.only(bottom: 45),
-                builder: DotSwiperPaginationBuilder(
-                  activeColor: Colors.white,
-                  color: Colors.white.withOpacity(0.5),
-                  size: 6.0,
-                  activeSize: 7.0,
-                  space: 4.0,
-                ),
-              ),
-              autoplay: true,
-              autoplayDelay: 4000,
-              duration: 500,
-            ),
-          ),
-          // 功能入口
-          Container(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  '常用功能',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4,
-                    mainAxisSpacing: 16,
-                    crossAxisSpacing: 16,
-                  ),
-                  itemCount: features.length,
-                  itemBuilder: (context, index) {
-                    final feature = features[index];
-                    return InkWell(
-                      onTap: () {
-                        NavigationService.navigateTo(
-                            _getRandomUrl(feature['urls']));
-                      },
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: feature['color'].withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(12),
+                      const SizedBox(height: 16),
+                      GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 4,
+                          mainAxisSpacing: 16,
+                          crossAxisSpacing: 16,
+                        ),
+                        itemCount: features.length,
+                        itemBuilder: (context, index) {
+                          final feature = features[index];
+                          return InkWell(
+                            onTap: () {
+                              NavigationService.navigateTo(
+                                  _getRandomUrl(feature['urls']));
+                            },
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: feature['color'].withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Icon(
+                                    feature['icon'],
+                                    color: feature['color'],
+                                    size: 24,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  feature['title'],
+                                  style: const TextStyle(fontSize: 12),
+                                ),
+                              ],
                             ),
-                            child: Icon(
-                              feature['icon'],
-                              color: feature['color'],
-                              size: 24,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            feature['title'],
-                            style: const TextStyle(fontSize: 12),
-                          ),
-                        ],
+                          );
+                        },
                       ),
-                    );
-                  },
+                    ],
+                  ),
                 ),
-              ],
-            ),
-          ),
-          // 筛选条件
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _buildFilterButton('区域'),
-                _buildFilterButton('租金'),
-                _buildFilterButton('户型'),
-                _buildFilterButton('更多'),
+                // 筛选条件
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _buildFilterButton('区域'),
+                      _buildFilterButton('租金'),
+                      _buildFilterButton('户型'),
+                      _buildFilterButton('更多'),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
           // 房源列表
-          Expanded(
-            child: ListView.builder(
-              itemCount: 10, // 这里替换为实际的房源数量
-              itemBuilder: (context, index) {
-                return _buildHouseItem();
-              },
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) => _buildHouseItem(),
+              childCount: 10,
             ),
           ),
         ],
