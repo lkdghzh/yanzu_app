@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import '../utils/webview_bridge.dart';
 
 class WebViewScreen extends StatefulWidget {
   final String url;
@@ -16,29 +17,43 @@ class WebViewScreen extends StatefulWidget {
 }
 
 class _WebViewScreenState extends State<WebViewScreen> {
-  late final WebViewController controller;
-  bool isLoading = true;
+  late final WebViewController _controller;
+  late final WebViewBridge _bridge;
 
   @override
   void initState() {
     super.initState();
-    controller = WebViewController()
+    _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setBackgroundColor(Colors.white)
       ..setNavigationDelegate(
         NavigationDelegate(
+          onProgress: (int progress) {
+            debugPrint('WebView is loading (progress : $progress%)');
+          },
           onPageStarted: (String url) {
-            setState(() {
-              isLoading = true;
-            });
+            debugPrint('Page started loading: $url');
           },
           onPageFinished: (String url) {
-            setState(() {
-              isLoading = false;
-            });
+            debugPrint('Page finished loading: $url');
+          },
+          onWebResourceError: (WebResourceError error) {
+            debugPrint('''
+              Page resource error:
+              code: ${error.errorCode}
+              description: ${error.description}
+              errorType: ${error.errorType}
+              isForMainFrame: ${error.isForMainFrame}
+            ''');
           },
         ),
       )
       ..loadRequest(Uri.parse(widget.url));
+
+    _bridge = WebViewBridge(
+      controller: _controller,
+      context: context,
+    );
   }
 
   @override
@@ -46,24 +61,9 @@ class _WebViewScreenState extends State<WebViewScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () {
-              controller.reload();
-            },
-          ),
-        ],
+        elevation: 0,
       ),
-      body: Stack(
-        children: [
-          WebViewWidget(controller: controller),
-          if (isLoading)
-            const Center(
-              child: CircularProgressIndicator(),
-            ),
-        ],
-      ),
+      body: WebViewWidget(controller: _controller),
     );
   }
 }
