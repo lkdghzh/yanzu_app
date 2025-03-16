@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper_view/flutter_swiper_view.dart';
+import 'dart:math';
+import 'webview_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,6 +19,39 @@ class _HomeScreenState extends State<HomeScreen> {
     'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800',
     'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800',
   ];
+
+  // 功能入口数据
+  final List<Map<String, dynamic>> features = [
+    {
+      'title': '生活缴费',
+      'icon': Icons.payment,
+      'color': Colors.blue,
+      'urls': ['https://example.com/payment', 'https://pay.example.com'],
+    },
+    {
+      'title': '房屋维修',
+      'icon': Icons.build,
+      'color': Colors.orange,
+      'urls': ['https://example.com/repair', 'https://fix.example.com'],
+    },
+    {
+      'title': '周边配套',
+      'icon': Icons.location_on,
+      'color': Colors.green,
+      'urls': ['https://example.com/nearby', 'https://map.example.com'],
+    },
+    {
+      'title': '租房攻略',
+      'icon': Icons.article,
+      'color': Colors.purple,
+      'urls': ['https://example.com/guide', 'https://blog.example.com'],
+    },
+  ];
+
+  String _getRandomUrl(List<String> urls) {
+    final random = Random();
+    return urls[random.nextInt(urls.length)];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -118,6 +153,71 @@ class _HomeScreenState extends State<HomeScreen> {
               autoplay: true,
               autoplayDelay: 4000,
               duration: 500,
+            ),
+          ),
+          // 功能入口
+          Container(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  '常用功能',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 4,
+                    mainAxisSpacing: 16,
+                    crossAxisSpacing: 16,
+                  ),
+                  itemCount: features.length,
+                  itemBuilder: (context, index) {
+                    final feature = features[index];
+                    return InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => WebViewScreen(
+                              url: _getRandomUrl(feature['urls']),
+                              title: feature['title'],
+                            ),
+                          ),
+                        );
+                      },
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: feature['color'].withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Icon(
+                              feature['icon'],
+                              color: feature['color'],
+                              size: 24,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            feature['title'],
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
           ),
           // 筛选条件
